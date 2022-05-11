@@ -17,15 +17,6 @@ function! neoformat#formatters#ruby#rubybeautify() abort
         \ }
 endfunction
 
-function! neoformat#formatters#ruby#rubocop() abort
-     return {
-        \ 'exe': 'rubocop',
-        \ 'args': ['--auto-correct', '--stdin', '"%:p"', '2>/dev/null', '|', 'sed "1,/^====================$/d"'],
-        \ 'stdin': 1,
-        \ 'stderr': 1
-        \ }
-endfunction
-
 function! neoformat#formatters#ruby#prettier() abort
     return {
         \ 'exe': 'prettier',
@@ -34,3 +25,23 @@ function! neoformat#formatters#ruby#prettier() abort
         \ 'try_node_exe': 1,
         \ }
 endfunction
+
+let s:clean_output = "awk '/^====================$/{p++;if(p==1){next}}p'"
+
+function! neoformat#formatters#ruby#rubocop() abort
+     return {
+        \ 'exe': 'rubocop',
+        \ 'args': ['--auto-correct', '--stdin', '"%:p"', '2>/dev/null', '|', s:clean_output],
+        \ 'stdin': 1,
+        \ 'stderr': 1
+        \ }
+endfunction
+
+function! neoformat#formatters#ruby#standard() abort
+     return {
+        \ 'exe': 'standardrb',
+        \ 'args': ['--fix', '--stdin', '"%:p"', '2>/dev/null', '|', s:clean_output],
+        \ 'stdin': 1,
+        \ 'stderr': 1
+        \ }
+ endfunction
